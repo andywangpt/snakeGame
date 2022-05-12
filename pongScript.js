@@ -1,13 +1,11 @@
 var canvas
 var canvasContext
 
-
 var ballX = 500
 var ballY = 500
 
 var ballSpeedX = 10
 var ballSpeedY = 10
-
 
 var drawColor = ''
 
