@@ -2,122 +2,107 @@ var canvas
 var canvasContext
 const SNAKE_THICKNESS = 25
 
-var snakeBody = [
+var snake = { direction: null,
+    body: [
     { x: 150, y: 285}, 
-    { x: 100, y: 285}, 
-    { x: 50, y: 285}
-]
+    { x: 125, y: 285}, 
+    { x: 100, y: 285},
+    { x: 75, y: 285}],
+    speed: 1, 
+}
 
-var snakeSpeed = 10
-var snakeLength = 4
-
+var color = ['green', 'blue', 'red', 'white']
 var applePosition = { x : 550, y : 300 }
-var velocity = { x : 0, y : 0 }
 
 var playerScore = 0
 var gameOver = false
 
-var turnDirection = ''
-
 window.onload = () => {
     canvas = document.getElementById('gameCanvas')
     canvasContext = canvas.getContext('2d')
-    
     document.body.addEventListener('keydown', keyDown)
 
     var framesPerSecond = 30
     setInterval(function() {
         drawEverything()
-        moveSnake()
         moveApple()
         displayScore()
-    }, 900/framesPerSecond)
+        crashEvents()
+    }, 10000/framesPerSecond)
 }
 
 function keyDown(e){
     e.preventDefault()
 
-    if(e.keyCode == 38) { //if up
-        velocity.y = -1
-        velocity.x = 0
-        turnDirection = 'UP'
-    } if(e.keyCode == 40) { //if down
-        velocity.y = 1
-        velocity.x = 0
-        turnDirection = 'DOWN'
-    } if(e.keyCode == 37) { // if left
-        velocity.y = 0
-        velocity.x = -1
-        turnDirection = 'LEFT'
-    } if(e.keyCode == 39) { // if right
-        velocity.y = 0
-        velocity.x = 1
-        turnDirection = 'RIGHT'
+    if(e.keyCode == 38) {
+        snake.direction = 'UP'
+    } if(e.keyCode == 40) {
+        snake.direction = 'DOWN'
+    } if(e.keyCode == 37) {
+        snake.direction = 'LEFT'
+    } if(e.keyCode == 39) {
+        snake.direction = 'RIGHT'
     }
 }
 
 function drawEverything() {
-    colorRect(0, 0, canvas.width, canvas.height, 'black') //gameboard
-    
-    canvasContext.fillStyle = 'red' //apple
+    colorRect(0, 0, canvas.width, canvas.height, 'black')
+
+    canvasContext.fillStyle = 'red'
     canvasContext.beginPath()
     canvasContext.arc(applePosition.x, applePosition.y, 12, 0, Math.PI*2, true)
     canvasContext.fill()
+    
+    drawSnake()
+    moveSnake()
+}
 
-    colorRect(snakeBody[0].x, snakeBody[0].y, SNAKE_THICKNESS, SNAKE_THICKNESS, 'green') //snakehead
-    colorRect(snakeBody[1].x, snakeBody[1].y, SNAKE_THICKNESS, SNAKE_THICKNESS, 'blue') //snake1
-    colorRect(snakeBody[2].x, snakeBody[2].y, SNAKE_THICKNESS, SNAKE_THICKNESS, 'yellow') //snake2
-    //console.log(snakeBody[1], snakeBody[1])
-
-    /* for(let i=0; i < snakeLength; i++){
-        colorRect(snakeBody[i].x, snakeBody[i].y, SNAKE_THICKNESS, SNAKE_THICKNESS, 'yellow') //snake2
-    } */
-
+function drawSnake() {
+    for (let i = 0; i < snake.body.length; i++) {        
+        colorRect(snake.body[i].x, snake.body[i].y, SNAKE_THICKNESS, SNAKE_THICKNESS, color[i])
+    }
 }
 
 function moveSnake() {
+    
 
-    var snakePath = Object.assign(snakeBody)
-
-    if(turnDirection == 'RIGHT') {
-        snakeBody[0].x = snakeBody[0].x + 1
+    if(snake.direction == 'RIGHT') {
+        snake.body[0].x = snake.body[0].x + SNAKE_THICKNESS
     }
-    if(turnDirection == 'LEFT') {
-        snakeBody[0].x = snakeBody[0].x - 1
+    if(snake.direction == 'LEFT') {
+        snake.body[0].x = snake.body[0].x - SNAKE_THICKNESS
     }    
-    if(turnDirection == 'UP') {
-        snakeBody[0].y = snakeBody[0].y - 1
+    if(snake.direction == 'UP') {
+        snake.body[0].y = snake.body[0].y - SNAKE_THICKNESS
     }    
-    if(turnDirection == 'DOWN') {
-        snakeBody[0].y = snakeBody[0].y + 1
+    if(snake.direction == 'DOWN') {
+        snake.body[0].y = snake.body[0].y + SNAKE_THICKNESS
     }
+    
+    const snakePath = Object.assign({}, snake)
 
-    //snakeBody[0].x = snakeBody[0].x + velocity.x
-    //snakeBody[0].y = snakeBody[0].y + velocity.y
-
-
-    for( var i = 1; i < snakeLength; i++) {
-        snakeBody[i] = snakePath[i-1] 
+    if(snake.direction) {
+        for( var i = 1; i < snake.body.length; i++) {
+            snake.body[i] = snakePath.body[i-1]
+            drawSnake()
+        }
+        console.log(snake.body[2], snakePath.body[1])
     }
-
-    //snakeBody[1] = snakePath[0]
-    //snakeBody[2] = snakePath[1]
-
 }
 
 function colorRect(leftX, topY, width, height, drawColor){
-    //game board
     canvasContext.fillStyle = drawColor
     canvasContext.fillRect(leftX, topY, width, height)
 }
 
 function moveApple() {
-    if(snakeBody[0].x + snakeLength == applePosition.x-10) {
-        if(snakeBody[0].y >= applePosition.y-25 && snakeBody[0] <= applePosition.y+25) {
+    if(snake.body[0].x == applePosition.x+SNAKE_THICKNESS) {
+        console.log(applePosition.y, snake.body[0].y)
+        if(snake.body[0].y >= applePosition.y-SNAKE_THICKNESS && snake.body[0].y <= applePosition.y+SNAKE_THICKNESS) {
             applePosition.x = Math.round(canvas.width * Math.random()) + 10
             applePosition.y = Math.round(canvas.height* Math.random()) + 10
             playerScore++
-            snakeLength++
+            snake.length++
     }}
 }
 
@@ -127,5 +112,13 @@ function displayScore() {
 }
 
 function crashEvents() {
-    
+
+    if(snake.body[0].x < 0 || snake.body[0].x >= 800 - SNAKE_THICKNESS) {
+        console.log('game over')
+    }
+    if(snake.body[0].y < 0 || snake.body[0].y >= 600) {
+        console.log('game over')
+    }
 }
+
+//const snakeCopy = snake.body.map(snakePart => Object.assign({}, snakePart))
