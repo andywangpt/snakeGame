@@ -15,4 +15,4 @@ This is my snake game written in Javascript.  The user can move the snake up, do
 The most interesting and conceptually challenging aspect of coding this game was understanding that a running game is constantly looping and running calculations at near instantaneous speeds and learning how to handle the logical processes accordingly.  I ran into the most difficultly attempting to copy the snake body's path and using it lead the rest of the snake and I wasn't able to solve this problem until I had a good grasp of mapping arrays and how to make a working copy of it.  Given this was my first real intro to gaming, I'm looking foward to working on other applications that build upon this concept.
 
 <b>Author</b>
-<ul><b>Andy Wang</b> <i>Full-Stack Software Developer</i><a href=https://www.linkedin.com/in/andy-wang-wreckcreation>LinkedIn</a> - <a href=https://www.wreckcreation.net> Website </a>
+<ul><b>Andy Wang</b> <i>Full-Stack Software Developer </i><a href=https://www.linkedin.com/in/andy-wang-wreckcreation>LinkedIn</a> - <a href=https://www.wreckcreation.net> Website </a>
