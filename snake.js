@@ -4,18 +4,12 @@ const SNAKE_THICKNESS = 20
 
 var snake = { direction: null,
     body: [
-    { x: 150, y: 280}, 
-    { x: 130, y: 280}, 
-    { x: 110, y: 280},
-    { x: 90, y: 280},
-    { x: 80, y: 280}, 
-    { x: 70, y: 280}, 
-    { x: 60, y: 280},
-    { x: 50, y: 280},
-    { x: 40, y: 280}, 
-    { x: 30, y: 280},
-    { x: 20, y: 280}],
-    speed: 1, 
+    { x: 160, y: 280}, 
+    { x: 140, y: 280}, 
+    { x: 120, y: 280},
+    { x: 100, y: 280},
+    { x: 80, y: 280}],
+    color: 'green', 
 }
 
 var applePosition = { x : 550, y : 280 }
@@ -27,17 +21,19 @@ window.onload = () => {
     canvasContext = canvas.getContext('2d')
     document.body.addEventListener('keydown', keyDown)
 
-    var framesPerSecond = 30
     const gameInterval = setInterval(function() {
         moveSnake()
         moveApple()
-        crashEvents()
         drawEverything()
+        crashEvents()
         displayScore()
         if(gameOver) {
             clearInterval(gameInterval)
+            alert('game over')
+            resetGame()
         }
-    }, 3000/framesPerSecond)
+    }, 100)
+
 }
 
 function keyDown(e){
@@ -80,29 +76,47 @@ function drawEverything() {
 
 function drawSnake() {
     for (let i = 0; i < snake.body.length; i++) {        
-        colorRect(snake.body[i].x, snake.body[i].y, SNAKE_THICKNESS, SNAKE_THICKNESS, 'green')
+        colorRect(snake.body[i].x, snake.body[i].y, SNAKE_THICKNESS, SNAKE_THICKNESS, snake.color)
     }
 }
 
 function moveSnake() {
     const snakePath = snake.body.map(snake => Object.assign({}, snake))
 
-    if(snake.direction == 'RIGHT') {
-        snake.body[0].x = snake.body[0].x + SNAKE_THICKNESS
-    }
-    if(snake.direction == 'LEFT') {
-        snake.body[0].x = snake.body[0].x - SNAKE_THICKNESS
-    }    
-    if(snake.direction == 'UP') {
-        snake.body[0].y = snake.body[0].y - SNAKE_THICKNESS
-    }    
-    if(snake.direction == 'DOWN') {
-        snake.body[0].y = snake.body[0].y + SNAKE_THICKNESS
-    }
+    if(!gameOver) {
+        if(snake.direction == 'RIGHT') {
+            if(snake.body[0].x + SNAKE_THICKNESS >= canvas.width){
+                gameOver = true
+                return
+            }
+            snake.body[0].x = snake.body[0].x + SNAKE_THICKNESS
+        }
+        if(snake.direction == 'LEFT') {
+            if(snake.body[0].x <= 0){
+                gameOver = true
+                return
+            }
+            snake.body[0].x = snake.body[0].x - SNAKE_THICKNESS
+        }    
+        if(snake.direction == 'UP') {
+            if(snake.body[0].y <= 0){
+                gameOver = true
+                return
+            }
+            snake.body[0].y = snake.body[0].y - SNAKE_THICKNESS
+        }    
+        if(snake.direction == 'DOWN') {
+            if(snake.body[0].y + SNAKE_THICKNESS >= canvas.height){
+                gameOver = true
+                return
+            }
+            snake.body[0].y = snake.body[0].y + SNAKE_THICKNESS
+        }
 
-    if(snake.direction) {
-        for( var i = 1; i < snake.body.length; i++) {
-            snake.body[i] = snakePath[i-1]
+        if(snake.direction) {
+            for( var i = 1; i < snake.body.length; i++) {
+                snake.body[i] = snakePath[i-1]
+            }
         }
     }
 }
@@ -119,19 +133,24 @@ function colorRect(leftX, topY, width, height, drawColor){
 function moveApple() {             
     if(snake.body[0].x + SNAKE_THICKNESS/2  >= applePosition.x - SNAKE_THICKNESS && snake.body[0].x <= applePosition.x + SNAKE_THICKNESS/2) {
         if(snake.body[0].y + SNAKE_THICKNESS/2 >= applePosition.y - SNAKE_THICKNESS && snake.body[0].y <= applePosition.y + SNAKE_THICKNESS/2) {
+            
             do {
-            applePosition.x = Math.round(canvas.width * Math.random()) - 20
-            } while (applePosition.x + SNAKE_THICKNESS > canvas.width && applePosition.x < 0)
-            do {
-            applePosition.y = Math.round(canvas.height * Math.random()) - 20
-            } while (applePosition.y + SNAKE_THICKNESS > canvas.width && applePosition.y < 0)
 
-            /*
-            for(let i = 0; i < snake.body.length; i++) {
-                if(applePosition.x == snake.body[i].x && applePosition.y == snake.body[i].y) {
-
+            applePosition.x = Math.round(canvas.width * Math.random())            
+            for(let i = 0; i < snake.body.length; i++){
+                if(applePosition.x >= snake.body[i].x && applePosition.x <= snake.body[i].x + SNAKE_THICKNESS) {
+                    applePosition.x = 0
                 }
-            } */
+            }} while (applePosition.x > canvas.width - 10 || applePosition.x < 10)
+            
+            do {
+
+            applePosition.y = Math.round(canvas.height * Math.random())
+            for(let i = 0; i < snake.body.length; i++){
+                if(applePosition.y >= snake.body[i].y && applePosition.y <= snake.body[i].y + SNAKE_THICKNESS) {
+                    applePosition.y = 0
+                }
+            }} while (applePosition.y > canvas.height - 10 || applePosition.y < 10)
 
             playerScore++
             snake.length++
@@ -150,34 +169,32 @@ function crashEvents() {
         for(let i = 1; i < snake.body.length; i++) {
             if(snake.body[0].x == snake.body[i].x && snake.body[0].y == snake.body[i].y) {
                 gameOver = true
-                if(gameOver){
-                    //alert('HIT')
-                    //resetGame()
-                    return
-                }
+                return
             }
         }
     }   
-
-    if(snake.body[0].x < 0 || snake.body[0].x + SNAKE_THICKNESS >= 800) {
-        gameOver = true
-        //alert('game over')
-        return resetGame()
-    }
-    if(snake.body[0].y < 0 || snake.body[0].y + SNAKE_THICKNESS >= 600) {
-        gameOver = true
-        //alert('game over')
-        return
-    }
 }
 
-function resetGame() {
-    alert('GAME OVER')
-    clearInterval(gameInterval)
+function resetGame(gameInterval) {
+    console.log('reset')
+    snake = { direction: null,
+        body: [
+        { x: 160, y: 280}, 
+        { x: 140, y: 280}, 
+        { x: 120, y: 280},
+        { x: 100, y: 280},
+        { x: 80, y: 280}],
+        color: 'green', 
+    }
     
+    applePosition = { x : 550, y : 280 }
+    playerScore = 0
     gameOver = false
+    location.reload()
+
 }
 
-        /*if(snake.body[0].x + SNAKE_THICKNESS == snake.body[i].x && snake.body[i].y +SNAKE_THICKNESS == snake.body[i].y){
-            alert('Yout hit yourself')
-        }*/
+function startGame() {
+
+}
+

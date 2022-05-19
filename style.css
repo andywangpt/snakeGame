@@ -1,0 +1,28 @@
+* {
+    background-color: rgb(68, 77, 64);
+}
+
+h1 {
+    text-align: center;
+    color: white;
+}
+
+body {
+    align-content: center;
+}
+
+#reset {
+    color: black;
+    font-size: large;
+    font-weight: 100;
+    background-color: rgb(136, 29, 29);
+    margin-left: 47%;
+    margin-right: 50%;
+    padding: 15px 20px;
+}
+
+h2 {
+    text-align: center;
+    margin-top: 0%;
+    color: white;
+}
