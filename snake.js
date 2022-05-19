@@ -62,24 +62,6 @@ function keyDown(e){
     }
 }
 
-function drawEverything() {
-    colorRect(0, 0, canvas.width, canvas.height, 'black')
-
-    canvasContext.fillStyle = 'red'
-    canvasContext.beginPath()
-    canvasContext.arc(applePosition.x, applePosition.y, 10, 0, Math.PI*2, true)
-    canvasContext.fill()
-    
-    drawSnake()
-
-}
-
-function drawSnake() {
-    for (let i = 0; i < snake.body.length; i++) {        
-        colorRect(snake.body[i].x, snake.body[i].y, SNAKE_THICKNESS, SNAKE_THICKNESS, snake.color)
-    }
-}
-
 function moveSnake() {
     const snakePath = snake.body.map(snake => Object.assign({}, snake))
 
@@ -121,15 +103,6 @@ function moveSnake() {
     }
 }
 
-function addSnakeBody() {
-    snake.body.push({x: 800, y: 600})
-}
-
-function colorRect(leftX, topY, width, height, drawColor){
-    canvasContext.fillStyle = drawColor
-    canvasContext.fillRect(leftX, topY, width, height)
-}
-
 function moveApple() {             
     if(snake.body[0].x + SNAKE_THICKNESS/2  >= applePosition.x - SNAKE_THICKNESS && snake.body[0].x <= applePosition.x + SNAKE_THICKNESS/2) {
         if(snake.body[0].y + SNAKE_THICKNESS/2 >= applePosition.y - SNAKE_THICKNESS && snake.body[0].y <= applePosition.y + SNAKE_THICKNESS/2) {
@@ -157,6 +130,35 @@ function moveApple() {
             addSnakeBody()
         }
     }
+}
+
+function drawEverything() {
+    colorRect(0, 0, canvas.width, canvas.height, 'black')
+
+    canvasContext.fillStyle = 'red'
+    canvasContext.beginPath()
+    canvasContext.arc(applePosition.x, applePosition.y, 10, 0, Math.PI*2, true)
+    canvasContext.fill()
+    
+    drawSnake()
+
+}
+
+function drawSnake() {
+    for (let i = 0; i < snake.body.length; i++) {        
+        colorRect(snake.body[i].x, snake.body[i].y, SNAKE_THICKNESS, SNAKE_THICKNESS, snake.color)
+    }
+}
+
+function colorRect(leftX, topY, width, height, drawColor){
+    canvasContext.fillStyle = drawColor
+    canvasContext.fillRect(leftX, topY, width, height)
+}
+
+
+
+function addSnakeBody() {
+    snake.body.push({x: 800, y: 600})
 }
 
 function displayScore() {
@@ -191,10 +193,6 @@ function resetGame(gameInterval) {
     playerScore = 0
     gameOver = false
     location.reload()
-
-}
-
-function startGame() {
 
 }
 
